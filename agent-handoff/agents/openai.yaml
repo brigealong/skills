@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Handoff"
+  short_description: "Create structured agent handoff envelopes with git checkpoints."
+  default_prompt: "Create a structured handoff file and git checkpoint for the current task."
