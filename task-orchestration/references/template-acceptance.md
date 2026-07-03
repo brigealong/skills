@@ -1,64 +1,50 @@
-# 模板 C：验收规范.md
+# Template C: acceptance-spec.md
 
-> 复制本文件到任务目录，命名为 `验收规范.md`，根据任务特性微调检查项。
-> `<...>` 为占位符，全部需要替换为实际内容。
-
----
-
-# 验收规范
-
-> 两道关：
-> 1. **执行 agent 自检**（每批必做）—— §一
-> 2. **最终验收**（审核方做）—— §二
+> Copy this file into the task directory as `acceptance-spec.md` and adjust
+> the checks to the task. Every `<...>` placeholder must be replaced.
 
 ---
 
-## 一、执行 agent 自检（每批必做）
+# Acceptance Spec
 
-### 1.1 自检触发条件
+> Two gates:
+> 1. **Executor self-check** (every batch) — §1
+> 2. **Final review** (by the reviewer) — §2
 
-完成进度表中一个"批次"的所有清单项，且预检到核心执行的各阶段列已勾选。**未勾完不要写报告**。
+---
 
-### 1.2 自检 6 项检查
+## 1. Executor self-check (every batch)
 
-每项给出 `PASS / FAIL / N/A` 与具体证据：
+### 1.1 Trigger
 
-#### 检查 1：完整性（Completeness）
-- 本批所有清单项已处理；输出数量与预期一致
-- <根据任务类型填写具体验证方式>
+All items in a batch processed, with precheck-through-execution columns
+checked off. **Don't write the report before the columns are done.**
 
-#### 检查 2：约束合规（Constraint Compliance）
-- 逐条核对《执行任务说明》§四中的硬约束：
-- [ ] <硬约束 1>（证据：<验证命令输出>）
-- [ ] <硬约束 2>（证据：<验证命令输出>）
-- [ ] ...
+### 1.2 The six checks
 
-#### 检查 3：质量标准（Quality Standards）
-- 输出符合质量/格式规范
-- <根据任务类型填写：文件操作 → 抽样命名合规；代码重构 → 测试+lint 全绿；内容工作 → 结构/格式一致>
+Each check gets `PASS / FAIL / N/A` plus concrete evidence:
 
-#### 检查 4：副作用检查（Side-Effect Check）
-- 未对范围外的系统/文件/数据产生意外影响
-- <根据任务类型填写具体检查方式>
+1. **Completeness** — every item in the batch processed; output count matches
+   expectation. <task-specific verification>
+2. **Constraint compliance** — walk the hard constraints in
+   `execution-brief.md` §4 one by one, each with command-output evidence.
+3. **Quality standards** — output meets quality/format specs. <file ops →
+   sample naming compliance; refactoring → tests+lint green; content →
+   structure consistent>
+4. **Side effects** — nothing outside scope was touched. <task-specific check>
+5. **Documentation sync** — README / indexes / changelogs reflect reality
+   (N/A if no doc outputs).
+6. **Logs & queues** — logs clean; conflicts/questions logged in the progress
+   table; table status accurate.
 
-#### 检查 5：文档同步（Documentation Sync）
-- 相关文档（README / 索引 / 变更日志等）已更新，反映实际状态
-- <若无文档产物则标记 N/A>
+### 1.3 Blocking rule
 
-#### 检查 6：日志与队列（Logs & Queues）
-- 执行日志（如适用）无错误
-- 冲突/待澄清项已在进度表登记
-- 进度表状态准确
+Any FAIL → **no PASS report**. Fixable → fix and re-check. Not fixable →
+clarification queue.
 
-### 1.3 阻塞标准
+### 1.4 Self-check report template
 
-任意一项 FAIL → **不写自检 PASS 报告**，转为：
-- 可自行修复的 → 修复后重检
-- 不可自行修复的 → 登记到"待澄清队列"
-
-### 1.4 自检报告模板
-
-文件路径：`reports/<YYYYMMDD>_batch<NN>_自检报告.md`
+Path: `reports/<YYYYMMDD>_batch<NN>_self-check.md`
 
 ```markdown
 ---
@@ -66,161 +52,138 @@ created: <YYYY-MM-DD>
 type: self-review-report
 batch: <NN>
 status: pass | fail | partial
-executing-agent: <agent 标识>
+executing-agent: <agent id>
 ---
 
-# 第 <NN> 批自检报告
+# Batch <NN> Self-Check Report
 
-## 总体结论
-- 状态：PASS / FAIL / PARTIAL
-- 覆盖清单项：<列表>
-- 阻塞项：<列表，无则填"无">
+## Verdict
+- Status: PASS / FAIL / PARTIAL
+- Items covered: <list>
+- Blocked items: <list or "none">
 
-## 6 项检查结果
+## Six checks
+### 1 Completeness
+- <verification and result>
+### 2 Constraint compliance
+- [x] <constraint> (evidence: <command output>)
+### 3 Quality standards
+- <sampling/verification result>
+### 4 Side effects
+- <result>
+### 5 Documentation sync
+- <status>
+### 6 Logs & queues
+- Logs: <path or "none">; conflicts: <n>; questions: <n>
 
-### 检查 1：完整性
-- <验证内容和结果>
-
-### 检查 2：约束合规
-- [x] <硬约束>（证据：<命令输出或描述>）
-- ...
-
-### 检查 3：质量标准
-- <抽样/验证结果>
-
-### 检查 4：副作用检查
-- <检查结果>
-
-### 检查 5：文档同步
-- <更新情况>
-
-### 检查 6：日志与队列
-- 日志：<路径或"无">
-- 冲突项：<数量>
-- 待澄清项：<数量>
-
-## 抽样核验
-
-随机抽 <N> 个执行项：
-| # | 项 | 预期 | 实际 | 一致 | 质量合规 |
-|---|-----|------|------|------|----------|
+## Sample verification
+Random sample of <N> items:
+| # | Item | Expected | Actual | Match | Quality |
+|---|------|----------|--------|-------|---------|
 | 1 | ... | ... | ... | ✓/✗ | ✓/✗ |
 
-## 已知遗留问题
+## Known leftovers
+- <if any>
 
-- <若有>
-
-## 申请最终验收
-
-提请审核方按《验收规范》§二 抽查。
+## Requesting final review
+Requesting reviewer sampling per acceptance-spec §2.
 ```
 
 ---
 
-## 二、最终验收（审核方做）
+## 2. Final review (by the reviewer)
 
-### 2.1 触发条件
-- 执行 agent 已提交本批自检报告，且报告状态为 PASS
-- 进度表对应批次的"自检"列已勾选
+### 2.1 Trigger
+- Executor submitted a PASS self-check report for the batch
+- The batch's self-check column is checked
 
-### 2.2 抽样验收清单
+### 2.2 Review checklist
 
-#### 验收 1：报告可信度
-- [ ] 自检报告 6 项检查证据完整可复核
-- [ ] 关键验证命令在审核方环境中重跑，结果与报告一致
+1. **Report credibility** — the six checks carry re-runnable evidence; key
+   verification commands re-run in the reviewer's environment match the
+   report.
+2. **Random sampling** (≥ 10% per batch) — sampled outputs exist, are
+   accessible, and meet the quality bar.
+3. **Command-driven constraint re-check** — the reviewer independently runs
+   verification commands (see `references/check-commands.md`).
+   **Never just read the numbers in the report — run the commands.**
 
-#### 验收 2：随机抽样核验（每批至少 10%）
-- [ ] 随机选 N 个执行项，验证输出存在、可访问、符合质量标准
+   ```
+   <verification commands filled in by the orchestrator>
+   <typical: count checks, integrity checks, constraint-leak scans>
+   ```
 
-#### 验收 3：约束复核（命令式）
+4. **Consistency** — naming/format/path conventions uniform; docs match
+   reality.
+5. **Edge matters** — conflict queue has rulings; clarification queue has
+   answers; held items still held.
 
-> 审核方独立运行验证命令。参考 `references/check-commands.md` 选取适用命令。
-> **不要只读报告中的数字——自己跑一遍。**
+### 2.3 Verdict
 
-```
-<由编排模型根据平台和任务类型填写验证命令>
-<常见：计数校验、完整性检查、约束泄漏扫描等>
-```
-
-#### 验收 4：一致性检查
-- [ ] 命名/格式/路径等约定统一
-- [ ] 文档与实际状态一致
-
-#### 验收 5：边界事项
-- [ ] 冲突队列有裁决记录
-- [ ] 待澄清队列有答复
-- [ ] hold 项保持 hold
-
-### 2.3 验收结论
-
-审核方在该批自检报告末尾追加：
+The reviewer appends to the batch's self-check report:
 
 ```markdown
 ---
 
-## 最终验收结论（审核方填写）
+## Final Review Verdict (reviewer)
 
-- 验收人：<标识>
-- 验收时间：<YYYY-MM-DD>
-- 结论：**PASS / CONDITIONAL PASS / FAIL**
+- Reviewer: <id>
+- Date: <YYYY-MM-DD>
+- Verdict: **PASS / CONDITIONAL PASS / FAIL**
 
-> 三态语义与上游 contract / making-contract Evaluation 对齐：
-> - **PASS**：满足 contract 全部 Must。
-> - **CONDITIONAL PASS**：**仅当**遗留项在 contract 定义的可接受遗留范围内（`READY_WITH_ACCEPTED_RISKS` 或可缺的 Should），且填了下方"批准信息"。它是可批准的条件接受，**不是**"待整改"。
-> - **FAIL**：结果不合规；遗留项超出可接受范围但可修的走此态（如需可标 `REMEDIATION_REQUIRED`），出整改单——**不要复用 CONDITIONAL PASS**。
+> Semantics aligned with the upstream contract's Evaluation:
+> - **PASS**: every contract Must holds.
+> - **CONDITIONAL PASS**: only when leftovers fall within what the contract
+>   explicitly allows to remain open, and the approval block below is filled.
+>   An approvable exception — **not** "needs rework".
+> - **FAIL**: non-compliant. Fixable leftovers outside the allowed range go
+>   here with a remediation list — do not stretch CONDITIONAL PASS.
 
-### 抽样结果
-- 抽样数：<N>
-- 不符项：<列表>
+### Sampling
+- Sample size: <N>
+- Non-conforming: <list>
 
-### 批准信息（仅 CONDITIONAL PASS 必填）
-- 允许遗留：<明确列出可接受的遗留项>
-- 批准者：<标识>
-- 补救责任人：<标识>
-- 补齐期限：<YYYY-MM-DD>
+### Approval block (required for CONDITIONAL PASS)
+- Allowed leftovers: <explicit list>
+- Approver: <id>
+- Remediation owner: <id>
+- Deadline: <YYYY-MM-DD>
 
-### 整改要求（CONDITIONAL PASS 或 FAIL 时）
-- <具体项>
+### Remediation required (CONDITIONAL PASS or FAIL)
+- <items>
 
-### 后续动作
-- [ ] 进度表对应批次"审批"列勾选
-- [ ] 进入下一批
+### Next actions
+- [ ] Approval column checked for the batch
+- [ ] Next batch unlocked
 ```
 
-### 2.4 PASS 后续动作
+### 2.4 After PASS
 
-审核方更新进度表：
-- 该批次每项的"审批"列勾选
-- 批次小结的"已通过审核"勾选
-- 解锁下一批
+The reviewer updates the progress table: approval columns checked, batch
+wrap-up checked, next batch unlocked.
 
 ---
 
-## 三、整任务终验
+## 3. Whole-task final acceptance
 
-最后一批通过后，最终验收人额外做：
+After the last batch passes, the final reviewer additionally runs:
 
-1. **整体一致性巡检**
-   - 配套文档之间无矛盾
-   - 索引/汇总覆盖完整
-
-2. **回归性核查**
-   - 既有系统/数据未被破坏
-   - 早期批次的产出物未被覆盖
-
-3. **签收文档**
-   - 进度表 status 改为 `completed`
-   - 规则与清单文档 status 改为 `accepted`
+1. **Global consistency sweep** — supporting docs don't contradict each
+   other; indexes/summaries are complete.
+2. **Regression check** — existing systems/data undamaged; earlier batches'
+   outputs not overwritten.
+3. **Sign-off** — progress table status → `completed`; rules and manifest
+   docs → `accepted`.
 
 ---
 
-### 使用说明
+### Filling guide
 
-| 字段 | 必填 | 说明 |
-|------|------|------|
-| 自检 6 项 | 建议保留全部 | 完整性/约束合规/质量/副作用/文档同步/日志队列——覆盖核心风险 |
-| 自检报告模板 | 是 | 给执行 agent 的格式骨架，保证报告结构一致 |
-| 验收 5 项 | 建议保留全部 | 报告可信度/抽样/命令复核/一致性/边界事项 |
-| 命令式复核命令 | 按需 | 根据平台和任务类型填写（参考 check-commands.md） |
-| 整任务终验 | 最后一批后 | 3 项：一致性巡检 + 回归核查 + 签收文档 |
-| 三态结论 | 建议保留 | PASS / CONDITIONAL PASS / FAIL，比二态更精确 |
+| Field | Required | Notes |
+|---|---|---|
+| Six self-checks | keep all | Completeness/constraints/quality/side-effects/docs/logs cover the core risks |
+| Report template | yes | Keeps executor reports structurally comparable |
+| Five review items | keep all | Credibility/sampling/commands/consistency/edges |
+| Verification commands | as needed | Per platform and task type (check-commands.md) |
+| Final acceptance | after last batch | Consistency sweep + regression + sign-off |
+| Three-state verdict | keep | More precise than binary pass/fail |

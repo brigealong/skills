@@ -1,206 +1,211 @@
-# 模板 A：执行任务说明.md
+# Template A: execution-brief.md
 
-> 复制本文件到任务目录，命名为 `执行任务说明.md`，填空后交给执行 agent。
-> `<...>` 为占位符，全部需要替换为实际内容。
-
----
-
-## 〇、上游契约与准入
-
-> Tier 2 必填；Tier 0/1 用内嵌最小契约代替独立文件。
-
-- `contract_ref`：`<路径到 making-contract 产出的 contract；Tier 0/1 写"内嵌，见本文件范围/验收">`
-- `contract_status`：`<READY / READY_WITH_ACCEPTED_RISKS / BLOCKED>`（**BLOCKED 不得派发**）
-- `design_spec_ref`：`<路径到已验证的 design/spec；无则写"无">`
-- 若 `READY_WITH_ACCEPTED_RISKS`：把风险清单（接受者 / 补救责任人 / 期限）抄进下方"六、遗留风险"（无该节则新增）。
+> Copy this file into the task directory as `execution-brief.md`, fill in the
+> blanks, and hand it to the executing agent. Every `<...>` placeholder must
+> be replaced with real content.
 
 ---
 
-## 一、流程总览
+## 0. Upstream contract & admission
 
+> Required for Tier 2. Tier 0/1 embed a minimal contract instead of a file.
+
+- `contract_ref`: `<path to the contract produced by making-contract; for Tier 0/1 write "embedded — see Scope/Acceptance below">`
+- `contract_status`: `<READY / READY_WITH_ACCEPTED_RISKS / BLOCKED>` (**BLOCKED must not be dispatched**)
+- `design_spec_ref`: `<path to the verified design/spec; "none" if absent>`
+- If `READY_WITH_ACCEPTED_RISKS`: copy the risk register (approver / owner /
+  deadline) into "6. Accepted risks" below (add the section if missing).
+
+---
+
+## 1. Process overview
+
+```text
+[this file + <rules-file> + <manifest> + progress-table.md]
+        │
+        ▼
+Executor works through progress-table batches
+        │
+        ▼
+Executor self-checks (acceptance-spec §1) → writes self-check report
+        │
+        ▼
+Final reviewer (user / review agent) samples per acceptance-spec §2
+        │
+        ▼
+Pass → next batch; fail → back to execution
 ```
-[本文件 + <配套规则文件> + <配套清单> + 进度表.md]
-        │
-        ▼
-执行 agent 按"进度表"批次执行
-        │
-        ▼
-执行 agent 自检（按《验收规范.md》§一）→ 写自检报告
-        │
-        ▼
-最终验收人（用户/审核 agent）按《验收规范.md》§二抽检
-        │
-        ▼
-通过 → 进入下一批；不通过 → 回到执行
-```
 
-执行 agent 的职责到"自检报告"为止；**不要**自行宣称"全部完成"。
+The executor's responsibility ends at the self-check report. **Never**
+self-declare "all done".
 
 ---
 
-## 二、权威分域（不是单一线性优先级）
+## 2. Domains of authority (not one linear ranking)
 
-不同问题问不同的权威源，**不能用一个总排序覆盖一切**：
+Different questions have different authoritative sources. **No single
+ordering covers everything:**
 
-| 权威域 | 谁说了算 | 来源 |
+| Domain | Who decides | Source |
 |---|---|---|
-| 目标域：Intent / Scope / Acceptance | 已确认的用户契约 | `<contract_ref>`（Tier 2 必填；Tier 0/1 为内嵌最小契约） |
-| 事实域：技术事实 / 设计结论 | 已验证的设计/规格 | `<design_spec_ref>` |
-| 状态域：当前批次运行态 | 进度表 / 看板 | `进度表.md`（Hermes 路径用 Kanban） |
-| 流程域：流程与硬约束 | 本文件 + 配套规则 | 本文件、`<配套规则文件>` |
-| 清单域：具体项与路径 | 配套清单 | `<配套清单>` |
+| Goals: Intent / Scope / Acceptance | The user-confirmed contract | `<contract_ref>` |
+| Facts: technical facts / design conclusions | The verified design/spec | `<design_spec_ref>` |
+| State: current batch runtime state | The progress table | `progress-table.md` |
+| Process: workflow and hard constraints | This file + rules | this file, `<rules-file>` |
+| Items: concrete items and paths | The manifest | `<manifest>` |
 
-**跨域冲突必须停止并协调，禁止静默选边**——尤其契约（目标域）与技术事实（事实域）冲突时：契约不能覆盖技术事实，技术事实也不能改写用户已确认的目标；停下，升级给编排者/用户裁决。
+**Cross-domain conflicts require stopping and escalating — never silently
+pick a side.** In particular: the contract cannot override technical facts,
+and technical facts cannot rewrite user-confirmed goals. Stop and escalate to
+the orchestrator/user.
 
-执行过程中**不得**自行修改目标域 / 事实域 / 清单域的上游产物；如发现问题：登记到《进度表》末尾的"待澄清队列"，等审核方处理。
-
----
-
-## 三、范围
-
-### 在范围
-- <列出执行 agent 允许做的动作>
-- <维护必要的产出物/索引>
-- <执行后的自检与报告>
-
-### 不在范围
-- <列出明确排除的事项>
-- <其他任务的职责范围>
+The executor must **not** modify upstream artifacts in the goal / fact /
+item domains. Found a problem? Log it in the progress table's clarification
+queue and wait for the reviewer.
 
 ---
 
-## 四、硬约束（违反即视为执行失败）
+## 3. Scope
 
-> **通用硬约束**（所有任务保留）：
+### In scope
+- <actions the executor is allowed to take>
+- <maintaining required outputs/indexes>
+- <post-execution self-check and reporting>
 
-1. **批次顺序**：按进度表批次顺序执行，不跨批
-2. **每批必自检**：完成一批，先自检通过，再写报告，再申请下批
-3. **不单改真理源**：发现配套文件有问题，登记到待澄清队列，不自行修改
-4. **遇升级条件必须停**：触发 §七 中任一条件时，停止执行并登记
+### Out of scope
+- <explicitly excluded work>
+- <responsibilities belonging to other tasks>
 
-> **任务特有硬约束**（由编排模型根据任务性质填写）：
+---
 
-5. **<任务特有硬约束 1>**：<描述>
-6. **<任务特有硬约束 2>**：<描述>
-7. ...
+## 4. Hard constraints (violation = execution failure)
 
-> **常见任务类型硬约束参考**（选取适用的，可增删）：
+> **Universal hard constraints** (keep for every task):
+
+1. **Batch order**: follow the progress table's batch order; no skipping ahead.
+2. **Self-check every batch**: finish a batch → self-check passes → write the
+   report → then request the next batch.
+3. **Never unilaterally edit sources of truth**: problems in supporting files
+   go to the clarification queue, not fixed in place.
+4. **Stop on escalation triggers**: any condition in §7 halts execution.
+
+> **Task-specific hard constraints** (filled in by the orchestrator):
+
+5. **<constraint 1>**: <description>
+6. **<constraint 2>**: <description>
+
+> **Reference constraints by task type** (pick what applies):
 >
-> | 任务类型 | 推荐硬约束 |
-> |----------|-----------|
-> | 文件操作 | 不破坏源文件；不覆盖已有目标；冲突进队列不自决 |
-> | 代码重构 | 变更后测试全绿；不改行为（除非明确要求）；不碰范围外文件 |
-> | 内容工作 | 不改变内容语义；保留原始元数据 |
-> | 数据处理 | 不丢失记录；schema 变更需审批 |
-> | 研究综合 | 每条论断有来源；不编造引用 |
+> | Task type | Recommended hard constraints |
+> |---|---|
+> | File operations | Don't damage sources; don't overwrite targets; conflicts queue, not self-resolved |
+> | Code refactoring | Tests green after change; no behavior change (unless required); no files outside scope |
+> | Content work | Don't alter meaning; preserve original metadata |
+> | Data processing | No lost records; schema changes need approval |
+> | Research synthesis | Every claim has a source; no fabricated citations |
 
 ---
 
-## 五、软约束（强烈推荐）
+## 5. Soft constraints (strongly recommended)
 
-> **通用软约束**：
-
-- **预检先行**：每个执行项先验证前置条件
-- **进度可断点**：每完成一个清单项立即更新进度表
-- **不静默推断**：清单中不精确的字段，自检时必须用实际值替换
-
-> **任务特有软约束**：
-
-- <根据任务性质补充>
+- **Precheck first**: verify preconditions before each item.
+- **Resumable progress**: update the progress table after every single item.
+- **No silent inference**: imprecise manifest fields must be replaced with
+  actual values at self-check time.
+- <task-specific additions>
 
 ---
 
-## 六、命令/操作模板
+## 6. Command / operation templates
 
-> **由编排模型根据平台和任务类型填写。**
-> 参考 `references/check-commands.md` 选取适用的命令。
-> 如果是代码项目，可直接引用项目的 test/lint/build 命令。
+> Filled in by the orchestrator for the actual platform and task type.
+> See `references/check-commands.md` for patterns. For code projects, use the
+> project's own test/lint/build commands.
 
-### 6.1 预检（验证前置条件）
-
-```
-<填写预检命令：验证输入存在性、数量、状态等>
-```
-
-### 6.2 核心执行
+### 6.1 Precheck (verify preconditions)
 
 ```
-<填写核心执行命令：实际的操作步骤>
+<commands verifying input existence, counts, state>
 ```
 
-### 6.3 执行后验证
+### 6.2 Core execution
 
 ```
-<填写验证命令：确认执行结果符合预期>
+<the actual operational steps>
 ```
 
-> 命令模板是"开箱即用"的起点，执行 agent 可根据实际情况微调。
-> 关键：确保执行 agent 拿到后能直接跑，不需要猜。
+### 6.3 Post-execution verification
+
+```
+<commands confirming the result matches expectations>
+```
+
+> Templates are a runnable starting point; the executor may adapt them.
+> The bar: the executor can run them without guessing.
 
 ---
 
-## 七、必须停下来询问的情况（升级条件）
+## 7. Escalation triggers (stop and ask)
 
-遇到以下任一情况，**停止执行**，登记到《进度表》"待澄清队列"：
+On any of the following, **stop** and log to the clarification queue:
 
-1. 输入/源路径不存在或与文档不一致
-2. 声明数量与预检实际差异 > `<阈值>`%（默认 20%）
-3. 冲突/歧义项 > `<上限>` 个（默认 5）
-4. 发现文档中未标注的相关子项/子范围
-5. 出现需要做"判断归类"的边缘情况
-6. 任何硬约束遇到执行困难
-7. 审核反馈打回时
+1. Input/source paths missing or inconsistent with the docs
+2. Declared count vs precheck count differs by > `<threshold>`% (default 20%)
+3. Conflicts/ambiguities exceed `<limit>` (default 5)
+4. Undocumented related sub-items or sub-scopes discovered
+5. Edge cases requiring judgment calls
+6. Any hard constraint becomes hard to satisfy
+7. Review verdict comes back negative
 
-**禁止**：自行猜测意图、自行扩展/收窄范围、自行修改清单或规则文件。
+**Forbidden**: guessing intent, expanding/narrowing scope, editing manifests
+or rules files.
 
-### 预检硬门（关键约束必须有强制中止）
+### Precheck hard gate (critical constraints need forced stops)
 
-> 文档约束 ≠ 执行硬门。仅写"应该升级"在执行 agent 眼里基本等于可选项（参见 anti-patterns.md AP4）。
-> 关键升级条件应实现为可执行检查，失败直接中止。
+> A documented constraint is not an enforcement gate. "Should escalate" reads
+> as optional to an executing agent (see anti-patterns AP4). Critical
+> escalation conditions must be executable checks that abort on failure.
 
 ```
-# 预检脚本骨架（根据平台选取 bash 或 PowerShell）
+# Precheck script skeleton (bash or PowerShell per platform)
 #
-# 核心逻辑：
-# 1. 验证输入存在性 → 不存在则 exit 1
-# 2. 验证数量偏差 → 超阈值则 exit 1
-# 3. 其他前置条件 → 不满足则 exit 1
+# 1. Verify inputs exist        → exit 1 if not
+# 2. Verify count deviation     → exit 1 if over threshold
+# 3. Other preconditions        → exit 1 if unmet
 #
-# 确保：文档里写"必须"的地方，脚本里也有对应的 exit 1
+# Rule: wherever the docs say "must", the script has a matching exit 1.
 ```
 
 ---
 
-## 八、每批交付物
+## 8. Deliverables per batch
 
-每完成进度表中的一个"批次"，执行 agent 必须产出：
-
-1. **进度表已更新**：该批所有项的状态列已勾选
-2. **自检报告**：`reports/<日期>_batch<NN>_自检报告.md`
-3. **执行日志**（如适用）：`logs/`
-4. **冲突队列**：若有，写入进度表末尾
-5. **待澄清队列**：若有，写入进度表末尾
+1. **Progress table updated**: all status columns for the batch checked off
+2. **Self-check report**: `reports/<date>_batch<NN>_self-check.md`
+3. **Execution log** (if applicable): `logs/`
+4. **Conflict queue**: appended to the progress table, if any
+5. **Clarification queue**: appended to the progress table, if any
 
 ---
 
-## 九、目录约定
+## 9. Directory layout
 
-```
-<任务目录>/
-├── reports/          ← 自检报告
-├── logs/             ← 执行日志（如适用）
-└── (配套 .md 文件)
+```text
+<task-dir>/
+├── reports/          ← self-check reports
+├── logs/             ← execution logs (if applicable)
+└── (supporting .md files)
 ```
 
 ---
 
-### 使用说明
+### Filling guide
 
-| 字段 | 必填 | 说明 |
-|------|------|------|
-| `配套规则文件` | 是 | 任务特有的规则文档 |
-| `配套清单` | 是 | 具体的执行项清单 |
-| 通用硬约束 1-4 | 建议保留 | 所有治理任务都适用 |
-| 任务特有硬约束 | 按需 | 根据任务性质填写，参考常见类型表 |
-| 命令/操作模板 | 是 | 确保执行 agent 拿到后能直接操作，不需要猜 |
-| 升级条件 | 按需 | 根据风险等级调整阈值 |
+| Field | Required | Notes |
+|---|---|---|
+| `<rules-file>` | yes | Task-specific rules document |
+| `<manifest>` | yes | The concrete item list |
+| Universal constraints 1–4 | keep | Apply to all governed tasks |
+| Task-specific constraints | as needed | Use the task-type reference table |
+| Command templates | yes | Must run without guessing |
+| Escalation triggers | as needed | Tune thresholds to risk level |

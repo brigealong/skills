@@ -1,169 +1,160 @@
-# 模板 B：进度表.md
+# Template B: progress-table.md
 
-> 复制本文件到任务目录，命名为 `进度表.md`，填入清单项和批次划分。
-> `<...>` 为占位符，全部需要替换为实际内容。
-
----
-
-# <任务名>进度表
-
-> 与《<配套清单文件名>》对齐。每完成一个清单项，更新对应行的状态列；每完成一批，写自检报告并申请审核。
-> 配套约束见《执行任务说明.md》与《验收规范.md》。
+> Copy this file into the task directory as `progress-table.md`, fill in the
+> checklist items and batch split. Every `<...>` placeholder must be replaced.
 
 ---
 
-## 状态字段说明
+# <task-name> Progress Table
 
-状态字符：
-- `[ ]` 未开始
-- `[~]` 进行中
-- `[x]` 已完成
-- `[!]` 阻塞 / 进升级队列
-- `[-]` 跳过 / 不适用
+> Aligned with `<manifest>`. Update the status columns after every item;
+> write a self-check report and request review after every batch.
+> Constraints live in `execution-brief.md` and `acceptance-spec.md`.
 
 ---
 
-## 阶段列设计
+## Status characters
 
-> **由编排模型根据任务类型定义。** 下面给出通用框架和常见示例。
+- `[ ]` not started
+- `[~]` in progress
+- `[x]` done
+- `[!]` blocked / escalated
+- `[-]` skipped / not applicable
 
-### 通用框架
+---
 
-每个清单项的阶段列应覆盖这条链路：
+## Stage column design
 
+> Defined by the orchestrator per task type. Generic frame plus common
+> examples below.
+
+### Generic frame
+
+Each item's stage columns cover this chain:
+
+```text
+precheck → core execution → [task-specific stages…] → self-check → approval
 ```
-预检（前置条件验证）→ 核心执行 → [任务特定验证阶段...] → 自检（纳入报告）→ 审批（审核通过）
-```
 
-- **预检** 和 **自检/审批** 是固定锚点，所有任务都有
-- 中间的列按任务性质定义，2-4 列为宜
+- **Precheck** and **self-check/approval** are fixed anchors for every task.
+- Middle columns depend on the task; 2–4 columns work best.
 
-### 常见任务类型的阶段列参考
+### Reference columns by task type
 
-**文件操作类**（迁移、重组、清理）：
+**File operations** (migration, reorganization, cleanup):
 
-| 预检 | 执行 | 计数 | 命名 | 自检 | 审批 |
+| precheck | execute | count | naming | self-check | approval |
 
-- 计数：目标文件数 = 源文件数
-- 命名：命名规范已应用
+- count: target file count = source file count
+- naming: naming convention applied
 
-**代码重构类**（API 迁移、依赖升级）：
+**Code refactoring** (API migration, dependency upgrades):
 
-| 预检 | 重构 | 测试 | Lint | 自检 | 审批 |
+| precheck | refactor | tests | lint | self-check | approval |
 
-- 测试：变更后测试全绿
-- Lint：无新增警告
+**Content work** (doc restructuring, content review):
 
-**内容工作类**（文档重组、内容审核）：
+| precheck | execute | fidelity | format | self-check | approval |
 
-| 预检 | 执行 | 保真度 | 格式 | 自检 | 审批 |
+- fidelity: meaning unchanged
 
-- 保真度：内容语义无偏移
-- 格式：输出结构符合规范
+**Data processing** (cleaning, format conversion):
 
-**数据处理类**（清洗、格式转换）：
+| precheck | execute | count | schema | self-check | approval |
 
-| 预检 | 执行 | 计数 | Schema | 自检 | 审批 |
+**Research synthesis** (literature review, knowledge base):
 
-- 计数：输入记录数 = 输出记录数（或有据可查的差异）
-- Schema：输出结构符合目标规范
+| precheck | execute | sources | coverage | self-check | approval |
 
-**研究综合类**（文献综述、知识库建设）：
+- sources: every claim cited
 
-| 预检 | 执行 | 来源 | 覆盖度 | 自检 | 审批 |
-
-- 来源：每条论断有引用
-- 覆盖度：必选主题已覆盖
-
-**自定义任务**：
-- 由编排模型根据任务特性定义 2-4 个中间列
-- 每列需写明：含义 + 通过条件
+**Custom tasks**: define 2–4 middle columns; each needs a meaning and a pass
+condition.
 
 ---
 
-## 第一批
+## Batch 1
 
-**批次目标**：<描述本批要完成的内容>
-**自检报告**：`reports/<日期>_batch01_自检报告.md`
+**Batch goal**: <what this batch delivers>
+**Self-check report**: `reports/<date>_batch01_self-check.md`
 
-### <分类 A>
+### <category A>
 
-> 下方表格的列按"阶段列设计"节确定。以下为通用占位列。
+| # | Item | precheck | <stage-2> | <stage-3> | self-check | approval | Notes |
+|---|------|----------|-----------|-----------|------------|----------|-------|
+| <1.1.1> | <summary> | [ ] | [ ] | [ ] | [ ] | [ ] | <notes> |
+| <1.1.2> | <summary> | [ ] | [ ] | [ ] | [ ] | [ ] | <notes> |
 
-| 序号 | 简述 | 预检 | <阶段2> | <阶段3> | 自检 | 审批 | 备注 |
-|------|------|------|---------|---------|------|------|------|
-| <1.1.1> | <简述> | [ ] | [ ] | [ ] | [ ] | [ ] | <备注> |
-| <1.1.2> | <简述> | [ ] | [ ] | [ ] | [ ] | [ ] | <备注> |
+### Batch 1 wrap-up
+- [ ] All stage columns checked for every item
+- [ ] Self-check report written to `reports/<date>_batch01_self-check.md`
+- [ ] Review requested
+- [ ] **Review verdict: <PASS / CONDITIONAL PASS / FAIL>**
 
-### 第一批小结
-- [ ] 全部清单项所有阶段列均勾选完成
-- [ ] 自检报告已写入 `reports/<日期>_batch01_自检报告.md`
-- [ ] 已申请审核
-- [ ] **审核结论：<PASS / CONDITIONAL PASS / FAIL>**
-
-### 第一批整改单（如有）
-- [ ] **R<#>**：<整改项描述>
+### Batch 1 remediation list (if any)
+- [ ] **R<#>**: <remediation item>
 
 ---
 
-## 第二批
+## Batch 2
 
-<!-- 按第一批格式重复 -->
-
----
-
-## 第三批（最后一批）
-
-<!-- 按第一批格式重复 -->
-
-### 最终结论
-- [ ] **整改通过 PASS**
-- [ ] **全部清单项审批列已勾选**
-- [ ] **整任务终验已启动并通过**
+<!-- repeat the Batch 1 format -->
 
 ---
 
-## 暂置 hold（不在本任务执行范围）
+## Batch N (final)
 
-| 序号 | 简述 | 原因 |
-|------|------|------|
-| <序号> | <简述> | <为什么 hold，谁来接续> |
+<!-- repeat the Batch 1 format -->
 
----
-
-## 冲突队列
-
-执行过程中遇到的冲突/歧义登记于此，由审核方裁决。
-
-| # | 涉及项 | 冲突描述 | 证据/上下文 | 建议方案 | 审核方裁决 |
-|---|--------|---------|------------|---------|-----------|
-| C1 | <清单项> | <冲突描述> | <证据> | <建议> | <裁决> |
+### Final verdict
+- [ ] **Remediation passed**
+- [ ] **All approval columns checked**
+- [ ] **Whole-task final acceptance run and passed**
 
 ---
 
-## 待澄清队列
+## Held items (outside this task's execution scope)
 
-执行过程中遇到的疑问登记于此，等审核方答复。
-
-| # | 提出时间 | 关联清单项 | 问题描述 | 建议方案 | 答复 |
-|---|---------|-----------|---------|---------|------|
-| Q1 | <日期> | <序号> | <问题> | <建议> | <答复> |
+| # | Item | Reason |
+|---|------|--------|
+| <id> | <summary> | <why held, who picks it up> |
 
 ---
 
-## 修订记录
+## Conflict queue
 
-- <日期> v1：初版
+Conflicts/ambiguities found during execution land here for the reviewer to
+adjudicate.
+
+| # | Item | Conflict | Evidence/context | Proposed resolution | Reviewer ruling |
+|---|------|----------|------------------|--------------------|-----------------|
+| C1 | <item> | <description> | <evidence> | <proposal> | <ruling> |
 
 ---
 
-### 使用说明
+## Clarification queue
 
-| 字段 | 必填 | 说明 |
-|------|------|------|
-| 批次数量 | 是 | 根据清单项数量和优先级划分，建议 2-5 批 |
-| 每批清单项 | 是 | 从任务清单中摘录，按批次分组 |
-| 阶段列 | 是 | 由编排模型根据任务类型定义（见"阶段列设计"节） |
-| 暂置 hold | 按需 | 不在本任务范围但需要记录的项 |
-| 双队列 | 建议保留 | 冲突队列 + 待澄清队列，即使初始为空也留段落 |
-| 整改单 | 按需 | CONDITIONAL PASS 后填写 |
+Questions found during execution land here for the reviewer to answer.
+
+| # | Raised | Item | Question | Proposal | Answer |
+|---|--------|------|----------|----------|--------|
+| Q1 | <date> | <id> | <question> | <proposal> | <answer> |
+
+---
+
+## Revision log
+
+- <date> v1: initial
+
+---
+
+### Filling guide
+
+| Field | Required | Notes |
+|---|---|---|
+| Batch count | yes | 2–5 batches by item count and priority |
+| Items per batch | yes | Extracted from the manifest, grouped by batch |
+| Stage columns | yes | Defined per task type (see "Stage column design") |
+| Held items | as needed | Out of scope but must not be forgotten |
+| Both queues | keep | Conflict + clarification, even if initially empty |
+| Remediation list | as needed | Filled after CONDITIONAL PASS / FAIL |

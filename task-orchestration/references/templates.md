@@ -1,53 +1,58 @@
-# 模板索引
+# Template Index
 
-本 skill 自带三套完整模板，可直接复制到任务目录使用。
+This skill ships three complete templates. Copy them into the task directory
+and fill in the placeholders.
 
-## 模板清单
+## The templates
 
-| 模板 | 源文件 | 复制到任务目录命名为 | 用途 |
-|------|--------|---------------------|------|
-| A | `references/template-execution.md` | `执行任务说明.md` | 约束"怎么做" |
-| B | `references/template-progress.md` | `进度表.md` | 跟踪"做到哪了" |
-| C | `references/template-acceptance.md` | `验收规范.md` | 判断"做得对不对" |
+| Template | Source file | Copy into task dir as | Governs |
+|---|---|---|---|
+| A | `references/template-execution.md` | `execution-brief.md` | *How* to do it |
+| B | `references/template-progress.md` | `progress-table.md` | *How far along* it is |
+| C | `references/template-acceptance.md` | `acceptance-spec.md` | *Whether it's right* |
 
-## 使用流程
+## Workflow
 
-0. **准入检查**（先做）：确认上游 `making-contract` 终态——`BLOCKED` 不得建模板/派发；Tier 2 必须有独立 contract。记下 `contract_ref` + `contract_status`。见 SKILL.md"契约准入"。
-1. 创建任务目录（路径由编排模型根据任务决定）
-2. 复制模板 A → `执行任务说明.md`，**先填顶部"〇、上游契约与准入"（contract_ref / contract_status / design_spec_ref）**，再填其余，交给执行 agent
-3. 复制模板 B → `进度表.md`，填入清单项和批次划分，定义阶段列
-4. 复制模板 C → `验收规范.md`，根据任务特性微调检查项
-5. 创建配套文件（按需）：规则文件、清单文件等
+0. **Admission check (first):** confirm the upstream contract's end state —
+   `BLOCKED` means no templates and no dispatch; Tier 2 requires an
+   independent contract. Record `contract_ref` + `contract_status`. See
+   "Contract admission" in SKILL.md.
+1. Create the task directory (path chosen by the orchestrator).
+2. Copy Template A → `execution-brief.md`. Fill the top section
+   ("0. Upstream contract & admission": contract_ref / contract_status /
+   design_spec_ref) **first**, then the rest. Hand it to the executor.
+3. Copy Template B → `progress-table.md`. Fill in the checklist items and
+   batch split; define the stage columns.
+4. Copy Template C → `acceptance-spec.md`. Adjust the checks to the task.
+5. Create supporting files as needed: rule files, item manifests.
 
-## 三套模板的关系
+## How the three relate
 
-```
-执行任务说明（A）── 约束"怎么做"
+```text
+Execution brief (A) ── constrains "how"
     │
-    ├── 进度表（B）── 跟踪"做到哪了"
-    │       │
-    │       ├── 冲突队列 ── 裁决"冲突怎么办"
-    │       └── 待澄清队列 ── 答复"疑问怎么办"
+    ├── Progress table (B) ── tracks "how far"
+    │       ├── conflict queue ── adjudicates "what about conflicts"
+    │       └── clarification queue ── answers "what about questions"
     │
-    └── 验收规范（C）── 判断"做得对不对"
-            │
-            ├── §一 自检 ── 执行 agent 自证
-            ├── §二 终审 ── 审核方独立证伪
-            └── §三 终验 ── 整任务签收
+    └── Acceptance spec (C) ── judges "is it right"
+            ├── §1 self-check ── the executor's own evidence
+            ├── §2 final review ── the reviewer's independent falsification
+            └── §3 final acceptance ── whole-task sign-off
 ```
 
-## 关键占位符
+## Common placeholders
 
-所有模板使用 `<...>` 占位符。常见占位符：
+All templates use `<...>` placeholders:
 
-| 占位符 | 说明 |
-|--------|------|
-| `<任务名>` | 任务的简短名称 |
-| `<配套规则文件>` | 任务特有的规则文档 |
-| `<配套清单>` | 执行项的完整清单 |
-| `<日期>` | YYYYMMDD 格式日期 |
-| `<NN>` | 批次编号（01, 02, 03...） |
-| `<序号>` | 清单项编号（如 1.1.1） |
-| `<阈值>` | 升级阈值（默认 20%） |
-| `<平台>` | 执行环境（windows / macos / linux） |
-| `<阶段N>` | 进度表的阶段列名（由编排模型定义） |
+| Placeholder | Meaning |
+|---|---|
+| `<task-name>` | Short name for the task |
+| `<rules-file>` | Task-specific rules document |
+| `<manifest>` | Complete list of items to execute |
+| `<date>` | Date in YYYYMMDD |
+| `<NN>` | Batch number (01, 02, …) |
+| `<item-id>` | Checklist item id (e.g. 1.1.1) |
+| `<threshold>` | Escalation threshold (default 20%) |
+| `<platform>` | Execution environment (windows / macos / linux) |
+| `<stage-N>` | Stage column name (defined by the orchestrator) |

@@ -1,139 +1,146 @@
-# 反模式清单
+# Anti-Patterns
 
-> 从真实多 agent 任务中提炼的教训。
-> 成功流程的总结很常见，价值低；这些是**我们没做好的事**，是稀缺素材。
-
----
-
-## AP1：软约束 = 会被忽略
-
-**现象**：在"软约束"段写了"应同步建 README"，结果第一批结束才发现 README 根本没建。
-
-**根因**：只要不在硬约束清单里，执行 agent 大概率跳过。
-
-**预防**：
-- 关键产物（README / 索引 / 报告）升级为硬约束，与核心执行动作同等对待
-- 自检检查项中专门覆盖这些产物
+> Lessons from real multi-agent runs. Write-ups of what worked are common and
+> cheap; these are the things **we got wrong** — the scarce material.
 
 ---
 
-## AP2：输入未经验证就执行
+## AP1: A soft constraint is an ignored constraint
 
-**现象**：规划文档里写的源路径 / 输入数据 / 前置条件不存在，执行 agent 跑到一半才发现。
+**Symptom**: "Should also create a README" sat in the soft-constraints
+section; the first batch ended with no README anywhere.
 
-**根因**：早期任务的描述照搬，没做实际验证就投入执行。
+**Root cause**: anything outside the hard-constraint list gets skipped by the
+executor with high probability.
 
-**预防**：
-- 所有输入（路径、数据源、前置条件、声明数量）在文档定稿前用实际命令验证一遍
-- 执行 agent 的第一条动作应该是预检——验证输入是否与文档一致
-- 不信任文档中的"应该存在"，只信任命令返回的结果
-
----
-
-## AP3：依赖表面标识符而非内容级验证
-
-**现象**：按文件名 / ID / 标签去重，结果同内容不同名的项全复制过去了；或按标题匹配引用，结果同标题不同内容的文献混在一起。
-
-**根因**：工具的默认去重/匹配只看表面标识，不做内容级校验。
-
-**预防**：
-- 大批量操作后必须做一次内容级完整性校验（hash / 记录数 / 测试通过率等）
-- 不要依赖文件名、标题、ID 等表面标识符判断"是否相同"
-- 去重逻辑应写在自检报告中，有明确的证据
+**Prevention**: promote critical artifacts (README / index / report) to hard
+constraints, and give them their own self-check items.
 
 ---
 
-## AP4：文档约束没有执行硬门
+## AP2: Executing on unverified inputs
 
-**现象**：写了"偏差 >20% 应升级"，但实际 +30% 时执行 agent 自决继续了（结果合规，但流程违反）。
+**Symptom**: source paths / input data / preconditions written in the plan
+didn't exist; the executor found out halfway through.
 
-**根因**：文档约束 ≠ 执行硬门。agent 的执行循环里没有写 `if 条件 then halt`。
-
-**预防**：
-- 关键约束做成可执行脚本或命令级断言，失败直接中止
-- 不要只在文档里写"应该"——要在执行层写 `exit 1` 或等效的强制中断
-- **规则**：文档里写"必须"的地方，执行层也必须有对应的强制中止机制
-
----
-
-## AP5：hold 项容易丢
-
-**现象**：某些项标了"暂置 hold"，终验时差点被遗忘。
-
-**根因**：hold 项在进度表中视觉上与已完成项混在一起。
-
-**预防**：
-- hold 项单独成段，不混在批次清单中
-- 终验报告专门检查 hold 项状态（"未做" vs "已转出"）
-- hold 不是 skip——hold 项要有明确的接续计划
+**Prevention**: verify every input (paths, data sources, declared counts)
+with actual commands before the brief is finalized. The executor's first
+action is a precheck. Trust command output, not the document's "should
+exist".
 
 ---
 
-## AP6：自检报告掩盖问题
+## AP3: Surface identifiers instead of content-level verification
 
-**现象**：执行 agent 的自检报告写得很漂亮，6 项检查全 PASS。但审核方独立验证发现问题。
+**Symptom**: deduplication by filename / ID / label copied over items with
+identical content but different names; citation matching by title merged
+different papers with the same title.
 
-**根因**：agent 倾向于写"我做了 X"而不是"我跑了 X 验证得到 Y"。报告是自证，不是他证。
-
-**预防**：
-- 物理分离自检和终审——自检段是 agent 自证，验收段是审核方独立证伪
-- 审核方必须独立跑验证，不信任报告中的数字
-- 最高性价比的验证手段：独立跑一次计数/完整性检查
-
----
-
-## AP7：二态验收导致过度返工
-
-**现象**：如果只有 PASS/FAIL 二态，所有"大方向对、细节要改"的情况都被打回重做。
-
-**根因**：没有中间态，审核方无法精确表达"目标对但过程偏"。
-
-**预防**：
-- 用三态结论：PASS / CONDITIONAL PASS / FAIL
-- 整改分四类（结果不合规 / 结果合规+流程偏离 / 文档不一致 / 治理产物缺失）——详见 `SKILL.md` §整改分类
-- 核心准则：优先看"目标态是否正确"，再看"过程是否合规"
+**Prevention**: after any bulk operation, run one content-level integrity
+check (hash / record count / test pass rate). Never decide "same or
+different" from names, titles, or IDs. Deduplication logic goes into the
+self-check report with evidence.
 
 ---
 
-## AP8：审核方越界做执行工作
+## AP4: Documented constraints without enforcement gates
 
-**现象**：审核方直接帮 agent 修复错误。
+**Symptom**: the brief said "deviation > 20% must escalate"; at +30% the
+executor decided to continue on its own. Result compliant, process violated.
 
-**根因**：审核方想快速解决问题，但这样执行方下次还会犯同样的错。
+**Root cause**: a documented constraint is not an enforcement gate. Nothing
+in the execution loop said `if condition then halt`.
 
-**预防**：
-- 审核方做"零风险 + 已知确定"的动作（改文档、填表、命令验证、按清单执行确认动作）
-- 任何需要"判断/创作"的工作交还执行 agent
-- 审核方的职责是发现问题，不是修复问题
-
----
-
-## AP9：前台轮询代替后台化 await（派发机制没当一等决策）
-
-**现象**：派 worker 后用裸 `terminal send` + 前台 `seq` 循环反复读 status 判完成。既无结构化完成信号，又让用户盯着 agent "转圈"；轮询还因 TUI spinner 误判 `tui-idle` 而脆，反复 retry 也不换路。
-
-**根因**：把"派发机制"当成达成目标的顺带步骤，随手选了无信号路径。前台 poll 对模型几乎无成本（代价在用户那边——盯着等），缺倒逼；加上第一次能用就惯性重复。
-
-**预防**：
-- 完成信号用 `orca orchestration` 的 `worker_done`（官方，带 taskId/dispatchId，`check --wait`），不用裸轮询、不用 Stop hook。
-- 必须等待时，在支持后台 tool call 的宿主里把 `wait`/`check --wait` 丢后台 → 完成自动唤醒；宿主不支持就用长 `--timeout-ms` / 滚动 `check --wait`，不前台 seq tight-loop。（`run_in_background` 是宿主能力，非 Orca CLI；Orca 只保证 `check --wait` 阻塞 + heartbeat。）
-- 派发路径 / await 机制的选型是**一等决策**：即便判成"一次性 send"，也先决定"怎么知道它完成"再发。
-- 轮询变脆（误判、反复 retry）本身就是"该换路"的信号——停下复评，别硬撑。
+**Prevention**: make critical constraints executable — scripts or assertions
+that abort on failure. **Rule: wherever the docs say "must", the execution
+layer has a matching forced stop.**
 
 ---
 
-## 快速检查表
+## AP5: Held items get lost
 
-启动新任务前，对照检查：
+**Symptom**: items marked "on hold" were nearly forgotten at final
+acceptance.
 
-| # | 检查项 | 对应反模式 |
-|---|--------|-----------|
-| 1 | 关键产物是否写在硬约束段？ | AP1 |
-| 2 | 所有输入是否经过实际验证？ | AP2 |
-| 3 | 大批量操作后是否计划做内容级校验？ | AP3 |
-| 4 | ">20% 偏差"等关键条件是否有命令级强制门？ | AP4 |
-| 5 | hold 项是否单独成段？终验是否检查？ | AP5 |
-| 6 | 审核方是否独立验证而非只读报告？ | AP6 |
-| 7 | 验收结论是否支持三态？ | AP7 |
-| 8 | 审核方职责边界是否明确？ | AP8 |
-| 9 | 完成信号是否用 worker_done / 后台 wait，而非前台轮询？ | AP9 |
+**Prevention**: held items get their own section, never mixed into batch
+lists; final acceptance explicitly checks their state ("not done" vs
+"handed off"). Hold is not skip — every held item needs a continuation plan.
+
+---
+
+## AP6: The self-check report papers over problems
+
+**Symptom**: a beautiful self-check report, six checks all PASS; the
+reviewer's independent verification found real problems.
+
+**Root cause**: agents write "I did X", not "I ran X and got Y". A report is
+self-attestation, not proof.
+
+**Prevention**: physically separate self-check from final review — the
+executor attests, the reviewer independently falsifies. The cheapest
+high-yield verification: re-run one count/integrity check yourself.
+
+---
+
+## AP7: Binary verdicts cause needless rework
+
+**Symptom**: with only PASS/FAIL, every "direction right, details off" case
+gets bounced for full rework.
+
+**Prevention**: three-state verdicts (PASS / CONDITIONAL PASS / FAIL) plus
+the four-way remediation classification (see SKILL.md). First ask "is the
+target state right", then "was the process compliant".
+
+---
+
+## AP8: The reviewer does the executor's job
+
+**Symptom**: the reviewer quietly fixes the executor's mistakes.
+
+**Root cause**: it's faster in the moment — and guarantees the executor
+makes the same mistake next time.
+
+**Prevention**: reviewers take only zero-risk, fully-determined actions
+(doc fixes, table updates, running verification commands). Anything needing
+judgment or creation goes back to the executor. The reviewer's job is
+finding problems, not fixing them.
+
+---
+
+## AP9: Foreground polling instead of a completion signal
+
+**Symptom**: after dispatching a worker, the orchestrator sat in a foreground
+loop re-reading status to guess "done yet?" — no structured completion
+signal, the user watching a spinner, and the polling itself misfiring on
+UI-idle heuristics.
+
+**Root cause**: the dispatch mechanism was treated as an incidental step
+rather than a first-class decision. Foreground polling costs the model
+nothing — the cost lands on the user.
+
+**Prevention**:
+- Decide **how you will know it's done before you dispatch** — that choice is
+  part of the dispatch, not an afterthought.
+- Prefer your runtime's structured completion event (a done message, a task
+  callback, an exit status) over screen-scraping status.
+- If you must wait, wait in the background so completion wakes you; never a
+  foreground tight loop.
+- When polling turns flaky (misreads, repeated retries), that is itself the
+  signal to switch mechanisms — stop and re-evaluate instead of retrying
+  harder.
+
+---
+
+## Pre-flight checklist
+
+| # | Check | Anti-pattern |
+|---|-------|--------------|
+| 1 | Critical artifacts in the hard-constraints section? | AP1 |
+| 2 | Every input verified with real commands? | AP2 |
+| 3 | Content-level integrity check planned after bulk ops? | AP3 |
+| 4 | Critical thresholds backed by command-level forced stops? | AP4 |
+| 5 | Held items in their own section, checked at final acceptance? | AP5 |
+| 6 | Reviewer verifying independently, not just reading reports? | AP6 |
+| 7 | Verdicts three-state? | AP7 |
+| 8 | Reviewer/executor boundary explicit? | AP8 |
+| 9 | Completion signal chosen before dispatch — no foreground polling? | AP9 |
