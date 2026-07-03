@@ -36,6 +36,65 @@ brainstorming / grilling  →  making-contract  →  writing-plans / orchestrati
       (explore)                 (pin down)              (execute)
 ```
 
+## The same task, twice
+
+**The task:** *"Our API client keeps failing on flaky network calls. Make it
+resilient."*
+
+### Without a contract
+
+The agent does exactly what was asked:
+
+> Added retry with exponential backoff to all 12 endpoints in
+> `api/client.ts`. Wrote 14 unit tests covering backoff timing and
+> max-attempt limits. All tests pass. ✅
+
+Plan followed. Tests green. Report tidy. Shipped.
+
+Four days later a payment request times out *after* the server has already
+processed it. The client retries. A customer is charged twice.
+
+Nothing in the loop could have caught this. The plan was executed
+faithfully, and the tests verified the retry logic — not the intent. The
+agent built the wrong thing, correctly.
+
+### With a contract
+
+`making-contract` doesn't let "resilient" through — it isn't checkable. One
+round of clarifying questions later:
+
+```markdown
+# Contract: API client resilience
+
+## 1. Intent
+Stop transient network failures from reaching users — without changing
+the semantics of any write.
+
+## 2. Scope
+In:  retry on timeout/5xx for idempotent requests (GET; PUT with request-id).
+Out: ANY retry of non-idempotent requests — POST /payments, POST /orders.
+
+## 3. Acceptance
+Must: no retry path wraps a non-idempotent endpoint — verified against
+the endpoint table by command, not by reading the diff description.
+
+## 4. Examples
+Good: GET /inventory times out twice, succeeds on the third attempt,
+      the user never notices.
+Bad:  POST /payments times out after the server already processed it,
+      the client retries → double charge. A diff that allows this FAILS.
+
+## 5. Evaluation
+FAIL if any retry wraps a non-idempotent call. PASS requires the
+endpoint classification checked in and covered by a test.
+```
+
+The same retry-everything diff comes up for review. It matches the Bad
+Sample line for line. Verdict: **FAIL** — before merge, not in production.
+
+One page of contract: the difference between a review comment and an
+incident postmortem.
+
 ## Companion skills
 
 | Skill | Use it when |
