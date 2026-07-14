@@ -3,8 +3,8 @@
 Decides whether the material is sufficient for the contract to hold. The core
 trap: **a contract with all five sections filled in looks done but may be
 semantically empty.** Intent stated but Scope doesn't cover it; every Must
-checkable but the key success condition missing; a good and a bad sample
-present but both trivial; three result states titled but no thresholds. All of
+checkable but the key success condition missing; decision cases present but
+all trivial; three result states titled but no thresholds. All of
 these pass a structure check and fail in reality. So the gate has two layers,
 and both must pass.
 
@@ -17,7 +17,7 @@ Pure boolean checks; no model judgment needed:
 | Intent | non-empty |
 | Scope | both In and Out subsections exist |
 | Acceptance | at least one Must |
-| Examples | at least 1 good + 1 bad |
+| Examples | 1 Target Example + Good / Bad / Boundary decision cases (a missing Boundary case needs a stated reason) |
 | Evaluation | PASS / CONDITIONAL PASS / FAIL all present |
 
 A structural miss is a gap. A structural pass means nothing yet — continue.
@@ -31,13 +31,22 @@ A structural miss is a gap. A structural pass means nothing yet — continue.
 - **Must → Evaluation mapping** — each Must maps to at least one check that
   names *who runs it, on what evidence, with what decision rule*. "Check it"
   is not a check.
-- **Examples → Acceptance mapping** — each sample maps to a key criterion.
-  The value of a sample is the decision boundary it draws, not its count.
-  Subjective or high-risk tasks also need a boundary sample — or an explicit
-  note naming the boundary that remains undrawn.
+- **Must is triggerable** — the planned execution must *necessarily produce*
+  the evidence for each Must. A Must that only becomes checkable on a
+  conditional branch ("only if the external loop fires") needs an explicit
+  forcing step (fixture / drill / minimal trigger case); if you can't write
+  one, demote it to Should or rewrite it. Otherwise early convergence leaves
+  the Must dangling with no evidence and the audit cannot decide it.
+- **Examples → Acceptance mapping** — each decision case maps to a key
+  criterion, the three cases differ decisively enough to flip a verdict, and
+  every sample carries a source and an authority label. `reference-only` and
+  `candidate` samples must not serve as hard acceptance bases.
 - **Executable three states** — the states are mutually exclusive and cover
   expected outcomes. CONDITIONAL PASS must define *what may remain open, who
-  approves, and by when* — otherwise it's just a fuzzy escape hatch.
+  approves, and by when* — otherwise it's just a fuzzy escape hatch. Per-Must
+  verdicts may be UNKNOWN ("cannot verify right now") — but every UNKNOWN you
+  can foresee at drafting time means that Must's trigger path is underspecified:
+  fix the trigger, don't accept the UNKNOWN.
 - **Out of Scope carries information** — if plausible adjacent scope exists,
   it is explicitly excluded. "Nothing unrelated" is filler and doesn't pass.
   If genuinely nothing needs excluding, write that and say why.

@@ -4,8 +4,9 @@ description: >-
   Use when a goal, design, or plan is about to move into implementation or be
   handed to another agent, and "done" is not yet verifiable. Turns intent into
   a minimal one-page contract — Intent, Scope, Acceptance, Examples,
-  Evaluation — anchored by at least one good and one bad example. Runs after
-  brainstorming/design, and gates before writing plans or orchestrating agents.
+  Evaluation — anchored by one whole target example plus good/bad/boundary
+  decision cases. Runs after brainstorming/design, and gates before writing
+  plans or orchestrating agents.
 ---
 
 # Making Contract
@@ -26,12 +27,15 @@ hard, and checkable. Do not add more sections.
 3. **Acceptance** — Must / Should criteria. Every Must is checkable by a
    command, a human, or an LLM judge. "Experience should be good" is not a
    criterion.
-4. **Examples** — at least one good and one bad example. Examples are the
-   anchor of the contract: they draw the decision boundary that abstract
-   criteria can't.
-5. **Evaluation** — how each Must gets checked, and three result states:
-   PASS, CONDITIONAL PASS (what may remain open, who approves, by when), and
-   FAIL.
+4. **Examples** — whole first, parts second: one **Target Example** (a
+   complete artifact of the same kind as the deliverable — the quality
+   ceiling) plus **Good / Bad / Boundary decision cases** that turn the key
+   criteria into decidable boundaries. Never collage local mistakes without a
+   whole-artifact anchor.
+5. **Evaluation** — how each Must gets checked, three result states — PASS,
+   CONDITIONAL PASS (what may remain open, who approves, by when), FAIL —
+   and per-Must verdicts (PASS / FAIL / UNKNOWN, where UNKNOWN means "cannot
+   verify right now", stated honestly rather than guessed).
 
 Use the template in [references/contract-template.md](references/contract-template.md).
 
@@ -45,9 +49,12 @@ Use the template in [references/contract-template.md](references/contract-templa
    multiple choice when possible. This is narrow clarification, not a second
    brainstorm: if the *design itself* is undecided, stop and send the task
    back to your design step — don't design inside the contract.
-4. If you lack examples, propose candidates and mark them "pending user
-   confirmation". A reference found on the web can inspire; only an example
-   the user confirms can serve as acceptance.
+4. Find examples whole-first: decide what kind of thing the deliverable is
+   as a whole, anchor one Target Example of that kind, and only then add
+   decision cases where a criterion carries real judgment risk. If evidence
+   is missing, propose candidates marked "pending user confirmation" — a web
+   reference can inspire, but only a user-confirmed example can decide
+   acceptance.
 5. Run the readiness gate in
    [references/readiness-gate.md](references/readiness-gate.md). A contract
    with all five sections filled in is *structurally* complete but can still
@@ -65,7 +72,13 @@ Use the template in [references/contract-template.md](references/contract-templa
    skill for implementation, or to your orchestration workflow for
    multi-agent execution. Downstream work must reference the contract and may
    not rewrite it. If the design later changes anything the user confirmed,
-   the confirmation is void — re-gate and re-confirm.
+   the confirmation is void — re-gate and re-confirm; mid-run changes to
+   confirmed clauses go through the Revision Log, never a silent edit.
+8. Close the loop after execution: write the final verdict back into the
+   contract (result + date + evidence pointers), and promote surviving
+   `candidate` samples to acceptance anchors — or retire them. Hand this
+   duty to the downstream workflow explicitly; never leave "promote after
+   the run" as an unkept promise.
 
 ## When to use it
 

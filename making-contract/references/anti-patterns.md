@@ -45,3 +45,24 @@ and fails downstream.
 - **Clarification balloons into a second brainstorm.** Inside this skill you
   ask narrow, blocking, one-at-a-time questions. Exploring alternatives and
   comparing architectures belongs upstream — hand the task back instead.
+
+- **Examples collaged from local mistakes.** Collecting scattered local-error
+  cases without first grasping what kind of thing the deliverable is as a
+  whole — and without one complete artifact as the Target Example. The
+  evaluator learns to nitpick, never to recognize a correct whole. Whole
+  first, parts second.
+
+- **A Must the planned execution never triggers.** If the evidence for a Must
+  only appears on a conditional branch, early convergence leaves it dangling
+  and undecidable. Write a forcing step, or demote it to Should.
+
+- **Silent mid-run renegotiation.** Lowering the bar or adding waivers by
+  editing the confirmed contract in place. The audit then judges against a
+  version the user never confirmed. Every change goes through the Revision
+  Log.
+
+- **The contract is abandoned after handoff.** Execution finishes, but the
+  final verdict is never written back and "promote this candidate once it
+  survives the run" stays an unkept promise. Closing the loop is part of the
+  contract's lifecycle: record the final verdict with evidence pointers, and
+  promote or retire every candidate sample.

@@ -31,13 +31,38 @@ What real user purpose does this task serve? (Purpose, not solution.)
 
 ## 4. Examples
 
-### Good Sample
-Given ... When ... Then ...
-<!-- or: input / output / why it passes -->
+### Target Example
+- Artifact:            <!-- one complete, admirable artifact (or link) of the same kind as the deliverable -->
+- Source:
+- Why exemplary:
+- Authority: reference-only | user-confirmed acceptance anchor
 
-### Bad Sample
-Given ... When ... Then ...
-<!-- or: input / output / why it fails -->
+### Decision Cases
+
+#### Good Case
+- Maps to:             <!-- which key Acceptance criterion -->
+- Source:
+- Authority: candidate | user-confirmed acceptance anchor
+- Sample:
+- Expected result: PASS
+- Why:
+
+#### Bad Case
+- Maps to:
+- Source:
+- Authority: candidate | user-confirmed acceptance anchor
+- Sample:
+- Expected result: FAIL
+- Why:
+
+#### Boundary Case
+- Maps to:
+- Source:
+- Authority: candidate | user-confirmed acceptance anchor
+- Sample:
+- Tempting wrong judgment:
+- Correct result: PASS | CONDITIONAL PASS | FAIL
+- Decisive distinction:
 
 ## 5. Evaluation
 
@@ -51,11 +76,31 @@ Given ... When ... Then ...
 - PASS:
 - CONDITIONAL PASS:  <!-- what may remain open, who approves, by when -->
 - FAIL:
+- Verdict record: per-Must machine-readable entries {id, status: PASS|FAIL|UNKNOWN, reason, evidence}.
+  UNKNOWN means "cannot be verified right now" (usually an unexercised trigger path) — state it honestly, never guess.
 ```
 
 ## Where examples come from
 
-Search in this priority order:
+**Whole first, parts second — the order is not reversible.**
+
+*Phase 1 — grasp the whole.* First answer: "what kind of thing, as a whole, is
+this deliverable?" (an article? a CLI? a report? a skill?). Get the type wrong
+and every sample you collect will be misaligned. Then find **one complete
+artifact of that same kind** as the Target Example — it establishes the
+quality ceiling and what a *right whole* looks like.
+
+*Phase 2 — calibrate the parts.* Decision Cases supplement the Target Example;
+they are not the main body. Build them only where a key Acceptance criterion
+carries a real judgment risk: find the criterion most dependent on subjective
+judgment, write down the evaluator's most tempting wrong call, then look for
+evidence that separates the right call from the wrong one.
+
+Never skip Phase 1 and collect local mistakes as your examples. A contract
+with only local-error cases and no whole-artifact anchor teaches the
+evaluator to nitpick, not to recognize a correct whole.
+
+Search for evidence in this priority order:
 
 1. Examples the user explicitly provided.
 2. Past work the user praised or rejected.
@@ -63,11 +108,13 @@ Search in this priority order:
 4. Public references from the web.
 5. Candidates you generate, marked "pending user confirmation".
 
-Keep two kinds of samples distinct:
+Every Target Example and Decision Case carries an authority label:
 
-- **Reference sample** — may come from anywhere; used for inspiration.
-- **Acceptance sample** — must be confirmed by the user (or come from work
-  the user explicitly approved) before it can decide pass/fail.
+- **reference-only** — may come from anywhere; inspiration only, never a hard
+  acceptance basis.
+- **candidate** — generated or not yet user-confirmed; clarification only.
+- **user-confirmed acceptance anchor** — confirmed by the user (or from work
+  the user explicitly approved); may decide pass/fail.
 
 If sample coverage is thin, say so inside the Examples section instead of
 pretending the standard is settled:
@@ -77,12 +124,28 @@ pretending the standard is settled:
 
 | Dimension | Sample? | Source | Risk |
 |---|---|---|---|
-| Good sample | yes | user-provided | low |
-| Bad sample | no | — | medium: evaluator may be too lenient |
-| Boundary sample | no | — | high: agent may draw its own boundary |
+| Target Example | yes | public reference | medium: inspiration only |
+| Good case | yes | user-provided | low |
+| Bad case | no | — | medium: evaluator may be too lenient |
+| Boundary case | no | — | high: agent may draw its own boundary |
 ```
 
 `Sample Coverage` lives inside section 4 — it is not a sixth section.
+
+## Revision log
+
+Once a contract is confirmed, never edit Acceptance / Scope / Pass Line in
+place — including mid-run bar-lowering and added waivers. Append a row instead
+(the evaluator judges against the latest version; history stays traceable):
+
+```markdown
+### Revision Log
+
+| Date | Clause (old → new) | Reason | Approved by |
+|---|---|---|---|
+```
+
+Like Sample Coverage, the Revision Log is an appendix, not a sixth section.
 
 ## Where the contract file lives
 
